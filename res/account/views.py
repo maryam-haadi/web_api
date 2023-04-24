@@ -3,11 +3,13 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
+from django.contrib.auth import login,logout
 from .serializers import Register_serializers
 from rest_framework.permissions import IsAuthenticated,IsAdminUser,AllowAny
 from rest_framework.authtoken.models import Token
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+import json
 # Create your views here.
 
 
@@ -57,11 +59,58 @@ def user_list(request):
 
 
 
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def login_user(request):
+
+        data = {}
+        reqBody = request.data
+        email = reqBody['email']
+        username = reqBody['username']
+        print(email)
+        password = reqBody['password']
+        print(password)
+        try:
+
+            Account = User.objects.get(username=username,email=email)
+            print(Account.password)
+        except BaseException as e:
+            raise ValidationError({"400": f'{str(e)}'})
+
+           
+        token = Token.objects.get_or_create(user=Account)[0].key
+        print(token)
+        if password != Account.password:
+            raise ValidationError({"message": "Incorrect Login credentials"})
+
+        if Account:
+            if Account.is_active:
+                print(request.user)
+                login(request, Account)
+                data["message"] = "user logged in"
+                data["email_address"] = Account.email
+
+                Res = {"data": data, "token": token}
+
+                return Response(Res)
+
+            else:
+                raise ValidationError({"400": f'Account not active'})
+
+        else:
+            raise ValidationError({"400": f'Account doesnt exist'})
 
 
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def logout_user(request):
 
+    request.user.auth_token.delete()
 
+    logout(request)
+
+    return Response('User Logged out successfully')
 
 
 
