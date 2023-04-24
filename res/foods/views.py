@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Food,Comment
 from .serializers import Food_serializers,Comment_serializers
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework import filters
 from rest_framework import generics
 
@@ -182,11 +182,12 @@ def show_comment(request,f_id):
 class FoodsAPIView(generics.ListCreateAPIView):
     queryset = Food.objects.all()
     serializer_class = Food_serializers
+    permission_classes = [IsAdminUser]
 
 
 
 class FoodsAPIView(generics.ListCreateAPIView):
-    search_fields = ['name','description']
+    search_fields = ['name']
     filter_backends = (filters.SearchFilter,)
     queryset = Food.objects.all()
     serializer_class = Food_serializers

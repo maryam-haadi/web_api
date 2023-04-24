@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'foods',
     'account',
     'reserve',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
