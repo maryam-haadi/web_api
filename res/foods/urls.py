@@ -16,4 +16,5 @@ urlpatterns=[
     path("drink",views.drink,name='drink'),
     path("delete/<f_id>/<c_id>",views.delete_comment,name='delete_comment'),
     path("show_comment/<f_id>",views.show_comment,name='show_comment'),
+    path("search",views.FoodsAPIView.as_view(),name='search'),
 ]
