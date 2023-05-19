@@ -123,7 +123,8 @@ def logout_user(request):
 @api_view(["GET"])                             
 def user_profile(request):
     user=request.user
-    return Response(user,status=status.HTTP_200_OK)
+    us_ser=Register_serializers(instance=user)
+    return Response(us_ser.data,status=status.HTTP_200_OK)
 
 
 
@@ -149,7 +150,9 @@ def update_username(request):
             us.username=new_username
             us.save()
             us_ser=Register_serializers(data=us)
-            us_ser.save()  
+            if us_ser.is_valid():
+                us_ser.save()
+        return Response("update successfully!",status=status.HTTP_200_OK)  
     else:
         return Response(serializer.errors)
 
