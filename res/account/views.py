@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 import json
-
+from .models import Profile
 # Create your views here.
 
 
@@ -23,7 +23,6 @@ def Register(request):
         serializer = Register_serializers(data=request.data)
         if serializer.is_valid():
             account = serializer.save()
-            login(request, account)
             account.is_active = True
             account.save()
             token = Token.objects.get_or_create(user=account)[0].key
@@ -32,6 +31,8 @@ def Register(request):
             data["password"] = account.password
             data["email"] = account.email
             data["token"] = token
+
+            login(request, account)
 
         else:
             data = serializer.errors
@@ -52,6 +53,7 @@ def Register(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def user_list(request):
     users=User.objects.all()
     user_serializer=Register_serializers(users,many=True)
@@ -119,47 +121,39 @@ def logout_user(request):
 
 
 
-
-
-
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@api_view(["GET"])                             
 def user_profile(request):
-    curent_user=request.user
-    print(curent_user.password)
-    try:
-        c_us=User.objects.get(id=curent_user.id)
-    except c_user.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)   
-      
-    c_user=user_serializers(instance=c_us)
- 
-    return Response({'logined user':c_user.data},status=status.HTTP_200_OK)
+    user=request.user
+    us_ser=user_serializers(isinstance=user)
+    return Response(us_ser.data,status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def update_password(request):
 
-    curent_user=request.user
-    serializer = Update_serializers(data=request.data)
+@api_view(["POST,GET"])
+@permission_classes([IsAuthenticated])  
+def update_username(request):
+
+    logined_user=request.user
+    data_input=request.data
+    serializer=Update_serializers(data=data_input)
 
     if serializer.is_valid():
-        u_pass=serializer.save()
-                # Check old password
-        if curent_user.password!=u_pass.old_password:
-            return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
-        # set_password also hashes the password that the user will get
-        curent_user.password=u_pass.new_password
-        curent_user.save()
-        c_s=Register_serializers(instance=curent_user)
-        response = {
-            'status': 'success',
-            'code': status.HTTP_200_OK,
-            'message': 'Password updated successfully',
-            'data': []
-         }
+        old_username=data_input['old_username']
+        new_username=data_input['new_username']
+        if logined_user != old_username:
+            return Response("invalid username !!",status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            try:
+                us=User.objects.get(username=old_username)
+            except us.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND)   
+
+            us.username=new_username
+            us.save()
+            us_ser=Register_serializers(data=us)
+            us_ser.save()  
+    else:
+        return Response(serializer.errors)
 
 
 
