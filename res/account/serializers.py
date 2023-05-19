@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 
 
+
 class Register_serializers(serializers.ModelSerializer):
 
     class Meta:
@@ -11,14 +12,23 @@ class Register_serializers(serializers.ModelSerializer):
 
 
 
+class user_serializers(serializers.ModelSerializer):
+
+    
+    class Meta:
+        model=User
+        fields=['username','email']
 
 
 
 
+class Update_serializers(serializers.ModelSerializer):
 
-
-
-
+    class Meta:
+        model=User
+        old_password = serializers.CharField(required=True)
+        new_password = serializers.CharField(required=True)
+        field='__all__'
 
 
 
