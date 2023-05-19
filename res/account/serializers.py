@@ -26,8 +26,8 @@ class Update_serializers(serializers.ModelSerializer):
 
     class Meta:
         model=User
-        old_password = serializers.CharField(required=True)
-        new_password = serializers.CharField(required=True)
+        old_username = serializers.CharField(required=True)
+        new_username = serializers.CharField(required=True)
         field='__all__'
 
 
