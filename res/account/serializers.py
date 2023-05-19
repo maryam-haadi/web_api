@@ -22,13 +22,11 @@ class user_serializers(serializers.ModelSerializer):
 
 
 
-class Update_serializers(serializers.ModelSerializer):
+class Update_serializers(serializers.Serializer):
 
-    class Meta:
-        model=User
-        old_username = serializers.CharField(required=True)
-        new_username = serializers.CharField(required=True)
-        field='__all__'
+    old_username = serializers.CharField(required=True)
+    new_username = serializers.CharField(required=True)
+
 
 
 

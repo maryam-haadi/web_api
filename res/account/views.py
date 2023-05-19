@@ -10,7 +10,6 @@ from rest_framework.authtoken.models import Token
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 import json
-from .models import Profile
 # Create your views here.
 
 
@@ -124,13 +123,12 @@ def logout_user(request):
 @api_view(["GET"])                             
 def user_profile(request):
     user=request.user
-    us_ser=user_serializers(isinstance=user)
-    return Response(us_ser.data,status=status.HTTP_200_OK)
+    return Response(user,status=status.HTTP_200_OK)
 
 
 
-@api_view(["POST,GET"])
-@permission_classes([IsAuthenticated])  
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])      #*****************************
 def update_username(request):
 
     logined_user=request.user
@@ -140,7 +138,7 @@ def update_username(request):
     if serializer.is_valid():
         old_username=data_input['old_username']
         new_username=data_input['new_username']
-        if logined_user != old_username:
+        if logined_user.username != old_username:
             return Response("invalid username !!",status=status.HTTP_401_UNAUTHORIZED)
         else:
             try:
