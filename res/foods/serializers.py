@@ -11,11 +11,15 @@ class Food_serializers(serializers.ModelSerializer):
 class Comment_serializers(serializers.ModelSerializer):
     class Meta:
         model=Comment
-        fields=["message","food"]  
+        fields=["food","message"]  
 
 
 
-
+class Show_Comment_serializers(serializers.ModelSerializer):
+        
+    class Meta:
+        model=Comment
+        fields=["user","message","food"]  
 
 
 

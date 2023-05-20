@@ -19,7 +19,7 @@ class Food(models.Model):
 
 class Comment(models.Model):
     food=models.ForeignKey(Food,verbose_name=("food"),related_name="comments",on_delete=models.CASCADE)
-    user_id=models.ForeignKey(User,related_name="comment",on_delete=models.CASCADE, default=None)
+    user=models.ForeignKey(User,related_name="comment",on_delete=models.CASCADE, blank=True)
     message=models.TextField()
     date=models.DateField(auto_now=False,auto_now_add=True)
 

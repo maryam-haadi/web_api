@@ -4,10 +4,11 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Food,Comment
-from .serializers import Food_serializers,Comment_serializers
+from .serializers import Food_serializers,Comment_serializers,Show_Comment_serializers
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework import filters
 from rest_framework import generics
+import datetime
 
 
 @api_view(["GET"])
@@ -54,9 +55,16 @@ def send_comment(request,f_id):
     
     new_comment=Comment_serializers(data=request.data)
     if new_comment.is_valid(raise_exception=True):
-        new_comment.user_id = request.user.pk
-        new_comment.save()
-        return Response({'message':'comment saved succsesfully','status':'success','comment':new_comment.data,
+
+        date1=datetime.datetime.now()
+        new_comment2=Comment(food=food,user=request.user,message=new_comment.message,date=date1)
+        print(new_comment2.food.id)
+        print(new_comment2.user)
+        print(new_comment2.message)
+        print(new_comment2.date)
+        new_comment2.save()
+        n_comment=Show_Comment_serializers(instance=new_comment2)
+        return Response({'message':'comment saved succsesfully','status':'success','comment':n_comment.data,
         },status=status.HTTP_201_CREATED)
 
     return Response(new_comment.errors)
@@ -64,15 +72,6 @@ def send_comment(request,f_id):
 
 
 
-@api_view(["GET"])
-def rate(request,f_id):   #****
-
-    try:
-        food=Food.objects.get(id=f_id)
-
-    except food.DoesNotExist:
-
-        return Response(status=status.HTTP_404_NOT_FOUND) 
   
 
 
@@ -175,9 +174,13 @@ def show_comment(request,f_id):
 
     comment=food.comments
 
-    c_serialize=Comment_serializers(instance=comment,many=True)
+    c_serialize=Show_Comment_serializers(instance=comment,many=True)
 
     return Response({"comments":c_serialize.data})
+
+
+
+
 
 
 class FoodsAPIView(generics.ListCreateAPIView):
