@@ -3,13 +3,14 @@ from rest_framework.decorators import api_view,permission_classes
 # Create your views here.
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Food,Comment
-from .serializers import Food_serializers,Comment_serializers,Show_Comment_serializers
+from .models import Food,Comment,FoodLike
+from .serializers import Food_serializers,Comment_serializers,Show_Comment_serializers,likeSerializer
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework import filters
 from rest_framework import generics
 import datetime
-
+from django.contrib.auth.models import User
+from django.db.models import Q
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -204,7 +205,27 @@ class FoodsAPIView(generics.ListCreateAPIView):
 
 
 
+def like(request,f_id):
+    try:
 
+        likeuser = User.objects.get(id=request.user.id)
+
+    except likeuser.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    likefood = Food.objects.filter(id=f_id)
+    check = FoodLike.objects.filter(Q(likeuser__name__contains=likeuser) & Q(likefood__name__contains=likefood ))
+    if(check.exists()):
+        return Response({
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message":"Already Liked"
+            })
+    new_like = FoodLike.objects.create(likeusers=likeuser, likepost=likefood)
+    new_like.save()
+    likefood.rate+=1
+    likefood.save()
+    serializer = likeSerializer(new_like)
+    return Response(serializer.data,status=status.HTTP_201_CREATED)
 
 
 

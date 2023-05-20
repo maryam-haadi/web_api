@@ -27,7 +27,9 @@ class Comment(models.Model):
     def __str__(self):
         return self.food.name
 
-
+class FoodLike(models.Model):
+    likeuser=models.ForeignKey(User,related_name="like",on_delete=models.CASCADE)
+    likefood=models.ForeignKey(Food,related_name="likes",on_delete=models.CASCADE,null=True)
 
 
 

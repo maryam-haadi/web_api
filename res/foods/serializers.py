@@ -1,5 +1,5 @@
 from rest_framework import routers, serializers, viewsets
-from .models import Food,Comment
+from .models import Food,Comment,FoodLike
 
 
 class Food_serializers(serializers.ModelSerializer):
@@ -20,6 +20,12 @@ class Show_Comment_serializers(serializers.ModelSerializer):
     class Meta:
         model=Comment
         fields=["user","message","date"]  
+
+
+class likeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FoodLike
+        fields = '__all__'        
 
 
 
