@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view,permission_classes
 # Create your views here.
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Food,Comment,FoodLike
-from .serializers import Food_serializers,Comment_serializers,Show_Comment_serializers,likeSerializer
+from .models import Food,Comment,FoodLike,FoodDislike
+from .serializers import Food_serializers,Comment_serializers,Show_Comment_serializers,likeSerializer,dislikeSerializer
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework import filters
 from rest_framework import generics
@@ -205,6 +205,9 @@ class FoodsAPIView(generics.ListCreateAPIView):
 
 
 
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def like(request,f_id):
     try:
 
@@ -213,21 +216,62 @@ def like(request,f_id):
     except likeuser.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    likefood = Food.objects.filter(id=f_id)
-    check = FoodLike.objects.filter(Q(likeuser__name__contains=likeuser) & Q(likefood__name__contains=likefood ))
+    try:
+
+        likefood = Food.objects.get(id=f_id)
+
+    except likefood.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+    check = FoodLike.objects.filter(likeuser=likeuser).filter(likefood=likefood)
     if(check.exists()):
+
+        check.delete()
         return Response({
-            "status": status.HTTP_400_BAD_REQUEST,
-            "message":"Already Liked"
+            "message":"Unliked!!"
             })
-    new_like = FoodLike.objects.create(likeusers=likeuser, likepost=likefood)
+    
+    new_like = FoodLike.objects.create(likeuser=likeuser, likefood=likefood)
     new_like.save()
-    likefood.rate+=1
-    likefood.save()
     serializer = likeSerializer(new_like)
+
     return Response(serializer.data,status=status.HTTP_201_CREATED)
 
 
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def dislike(request,f_id):
+    try:
+
+        dislikeuser = User.objects.get(id=request.user.id)
+
+    except dislikeuser.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+
+        dislikefood = Food.objects.get(id=f_id)
+
+    except dislikefood.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+    check = FoodLike.objects.filter(likeuser=dislikeuser).filter(likefood=dislikefood)
+    if(check.exists()):
+
+        check.delete()
+        return Response({
+            "message":"Undisliked!!"
+            })
+    
+    new_dislike = FoodDislike.objects.create(dislikeuser=dislikeuser, dislikefood=dislikefood)
+    new_dislike.save()
+    serializer = likeSerializer(new_dislike)
+
+    return Response(serializer.data,status=status.HTTP_201_CREATED)
 
 
 

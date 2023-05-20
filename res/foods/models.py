@@ -32,7 +32,9 @@ class FoodLike(models.Model):
     likefood=models.ForeignKey(Food,related_name="likes",on_delete=models.CASCADE,null=True)
 
 
-
+class FoodDislike(models.Model):
+    dislikeuser=models.ForeignKey(User,related_name="Dislike",on_delete=models.CASCADE)
+    dislikefood=models.ForeignKey(Food,related_name="Dislikes",on_delete=models.CASCADE,null=True)
 
 
 

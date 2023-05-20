@@ -17,4 +17,5 @@ urlpatterns=[
     path("show_comment/<f_id>",views.show_comment,name='show_comment'),
     path("search",views.FoodsAPIView.as_view(),name='search'),
     path("like/<f_id>",views.like,name='like'),
+    path("dislike/<f_id>",views.dislike,name='dislike'),
 ]

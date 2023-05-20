@@ -1,5 +1,5 @@
 from rest_framework import routers, serializers, viewsets
-from .models import Food,Comment,FoodLike
+from .models import Food,Comment,FoodLike,FoodDislike
 
 
 class Food_serializers(serializers.ModelSerializer):
@@ -27,6 +27,9 @@ class likeSerializer(serializers.ModelSerializer):
         model = FoodLike
         fields = '__all__'        
 
-
+class dislikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FoodDislike
+        fields = '__all__'    
 
 
