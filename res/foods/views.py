@@ -54,6 +54,7 @@ def send_comment(request,f_id):
     
     new_comment=Comment_serializers(data=request.data)
     if new_comment.is_valid(raise_exception=True):
+        new_comment.user_id = request.user.pk
         new_comment.save()
         return Response({'message':'comment saved succsesfully','status':'success','comment':new_comment.data,
         },status=status.HTTP_201_CREATED)
