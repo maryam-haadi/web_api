@@ -57,26 +57,42 @@ def send_comment(request,f_id):
     if new_comment.is_valid(raise_exception=True):
 
         date1=datetime.datetime.now()
-        new_comment2=Comment(food=food,user=request.user,message=new_comment.message,date=date1)
-        print(new_comment2.food.id)
-        print(new_comment2.user)
-        print(new_comment2.message)
-        print(new_comment2.date)
+        new_comment2=Comment(food=food,user=request.user,message=new_comment.data["message"],date=date1)
+
         new_comment2.save()
         n_comment=Show_Comment_serializers(instance=new_comment2)
-        return Response({'message':'comment saved succsesfully','status':'success','comment':n_comment.data,
+        return Response({'message':'comment saved succsesfully','status':'success','comment_for_food':food.id,'comment':n_comment.data,
         },status=status.HTTP_201_CREATED)
 
     return Response(new_comment.errors)
 
 
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def show_comment(request,f_id):
+
+    try:
+        food=Food.objects.get(id=f_id)
+
+    except food.DoesNotExist:
+
+        return Response(status=status.HTTP_404_NOT_FOUND) 
+
+    comment=food.comments
+
+    c_serialize=Show_Comment_serializers(instance=comment,many=True)
+
+    return Response({"comments":c_serialize.data})
+
 
   
 
 
 
+
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def breakfast(request):
     try:
         breakfasts=Food.objects.all().filter(food_type='breakfast')
@@ -90,7 +106,9 @@ def breakfast(request):
     return Response(breakfast_serialize.data)
 
 
+
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def dinner(request):
     try:
         dinner=Food.objects.all().filter(food_type='dinner')
@@ -107,6 +125,7 @@ def dinner(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def lunch(request):
     try:
         lunch=Food.objects.all().filter(food_type='lunch')
@@ -122,6 +141,7 @@ def lunch(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def drink(request):
     try:
         drink=Food.objects.all().filter(food_type='drink')
@@ -133,6 +153,9 @@ def drink(request):
     drink_serialize=Food_serializers(instance=drink,many=True)
 
     return Response(drink_serialize.data)
+
+
+
 
 
 
@@ -161,22 +184,6 @@ def delete_comment(request,f_id,c_id):            #*********
 
 
 
-
-@api_view(["GET"])
-def show_comment(request,f_id):
-
-    try:
-        food=Food.objects.get(id=f_id)
-
-    except food.DoesNotExist:
-
-        return Response(status=status.HTTP_404_NOT_FOUND) 
-
-    comment=food.comments
-
-    c_serialize=Show_Comment_serializers(instance=comment,many=True)
-
-    return Response({"comments":c_serialize.data})
 
 
 

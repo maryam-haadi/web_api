@@ -11,7 +11,7 @@ class Food_serializers(serializers.ModelSerializer):
 class Comment_serializers(serializers.ModelSerializer):
     class Meta:
         model=Comment
-        fields=["food","message"]  
+        fields=["message"]  
 
 
 
@@ -19,7 +19,7 @@ class Show_Comment_serializers(serializers.ModelSerializer):
         
     class Meta:
         model=Comment
-        fields=["user","message","food"]  
+        fields=["user","message","date"]  
 
 
 
