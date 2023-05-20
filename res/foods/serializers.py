@@ -25,11 +25,11 @@ class Show_Comment_serializers(serializers.ModelSerializer):
 class likeSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodLike
-        fields = '__all__'        
+        fields = ['likeuser']        
 
 class dislikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodDislike
-        fields = '__all__'    
+        fields = ['dislikeuser']    
 
 

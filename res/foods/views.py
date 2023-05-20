@@ -40,7 +40,7 @@ def food_detail(request,f_id):
         food=Food.objects.get(id=f_id)
     except food.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND) 
-    
+
     food2=Food_serializers(instance=food,many=False)    
 
     return Response({'detail_food':food2.data})
@@ -228,12 +228,16 @@ def like(request,f_id):
     if(check.exists()):
 
         check.delete()
+        likefood.rate-=1
+        likefood.save()
         return Response({
             "message":"Unliked!!"
             })
     
     new_like = FoodLike.objects.create(likeuser=likeuser, likefood=likefood)
     new_like.save()
+    likefood.rate+=1
+    likefood.save()
     serializer = likeSerializer(new_like)
 
     return Response(serializer.data,status=status.HTTP_201_CREATED)
@@ -259,9 +263,10 @@ def dislike(request,f_id):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-    check = FoodLike.objects.filter(likeuser=dislikeuser).filter(likefood=dislikefood)
+    check = FoodDislike.objects.filter(dislikeuser=dislikeuser).filter(dislikefood=dislikefood)
     if(check.exists()):
-
+        dislikefood.rate+=1
+        dislikefood.save()
         check.delete()
         return Response({
             "message":"Undisliked!!"
@@ -269,7 +274,9 @@ def dislike(request,f_id):
     
     new_dislike = FoodDislike.objects.create(dislikeuser=dislikeuser, dislikefood=dislikefood)
     new_dislike.save()
-    serializer = likeSerializer(new_dislike)
+    dislikefood.rate-=1
+    dislikefood.save()
+    serializer = dislikeSerializer(new_dislike)
 
     return Response(serializer.data,status=status.HTTP_201_CREATED)
 
