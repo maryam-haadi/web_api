@@ -12,6 +12,7 @@ import datetime
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def food_list(request):
     food_list1=Food.objects.all().order_by('rate')[2:4]
     food_list2=Food_serializers(food_list1,many=True)
@@ -20,6 +21,7 @@ def food_list(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def food_slider(request):
 
     food_slider1=Food.objects.all().order_by('id')[:3]
@@ -31,6 +33,7 @@ def food_slider(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def food_detail(request,f_id):
     try:
         food=Food.objects.get(id=f_id)
@@ -160,6 +163,7 @@ def drink(request):
 
 
 @api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
 def delete_comment(request,c_id):         
 
     try:
@@ -172,6 +176,9 @@ def delete_comment(request,c_id):
 
     except comment.DoesNotExist:
         return Response({"message":"this comment not exist!!"},status=status.HTTP_404_NOT_FOUND) 
+
+
+
 
 
 
