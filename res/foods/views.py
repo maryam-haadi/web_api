@@ -160,26 +160,18 @@ def drink(request):
 
 
 @api_view(["DELETE"])
-def delete_comment(request,f_id,c_id):            #*********
-
-
-    try:
-        food=Food.objects.get(id=f_id)
-
-    except food.DoesNotExist:
-
-        return Response(status=status.HTTP_404_NOT_FOUND) 
-
+def delete_comment(request,c_id):         
 
     try:
         comment=Comment.objects.get(id=c_id)
-        comment.delete()
-
-        return Response({"message":"comment deleted!!"})
+        if comment.user==request.user:
+            comment.delete()
+            return Response({"message":"comment deleted!!"})
+        else:
+            return Response({"message":"you dont delete this comment!!"},status=status.HTTP_400_BAD_REQUEST)
 
     except comment.DoesNotExist:
-
-        return Response(status=status.HTTP_404_NOT_FOUND) 
+        return Response({"message":"this comment not exist!!"},status=status.HTTP_404_NOT_FOUND) 
 
 
 
