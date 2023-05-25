@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])          #tanzim konam
 def food_list(request):
     food_list1=Food.objects.all().order_by('rate')[2:4]
     food_list2=Food_serializers(food_list1,many=True)
@@ -22,7 +22,7 @@ def food_list(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])            #tanzim konam
 def food_slider(request):
 
     food_slider1=Food.objects.all().order_by('id')[:3]
@@ -244,6 +244,9 @@ def like(request,f_id):
     serializer = likeSerializer(new_like)
 
     return Response(serializer.data,status=status.HTTP_201_CREATED)
+
+
+
 
 
 
