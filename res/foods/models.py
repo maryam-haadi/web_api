@@ -8,6 +8,7 @@ class Food(models.Model):
     name=models.CharField(max_length=100)
     description=models.CharField(max_length=50)
     rate=models.IntegerField(default=0)
+    negative_rate=models.IntegerField(default=0)
     price=models.IntegerField(blank=False)
     time=models.IntegerField(blank=False)
     photo=models.ImageField(upload_to='foods/',blank=False)

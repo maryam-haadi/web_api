@@ -34,7 +34,7 @@ def food_slider(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])               #ok
 def food_detail(request,f_id):
     try:
         food=Food.objects.get(id=f_id)
@@ -49,7 +49,7 @@ def food_detail(request,f_id):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])            #ok
 def send_comment(request,f_id):
     try:
         food=Food.objects.get(id=f_id)
@@ -73,7 +73,7 @@ def send_comment(request,f_id):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])                #ok
 def show_comment(request,f_id):
 
     try:
@@ -96,7 +96,7 @@ def show_comment(request,f_id):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])            #ok
 def breakfast(request):
     try:
         breakfasts=Food.objects.all().filter(food_type='breakfast')
@@ -112,7 +112,7 @@ def breakfast(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])          #ok
 def dinner(request):
     try:
         dinner=Food.objects.all().filter(food_type='dinner')
@@ -129,7 +129,7 @@ def dinner(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])            #ok
 def lunch(request):
     try:
         lunch=Food.objects.all().filter(food_type='lunch')
@@ -145,7 +145,7 @@ def lunch(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])        #ok
 def drink(request):
     try:
         drink=Food.objects.all().filter(food_type='drink')
@@ -165,7 +165,7 @@ def drink(request):
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
-def delete_comment(request,c_id):         
+def delete_comment(request,c_id):            #vorood check shavad ?
 
     try:
         comment=Comment.objects.get(id=c_id)
@@ -190,7 +190,7 @@ def delete_comment(request,c_id):
 
 
 
-class FoodsAPIView(generics.ListCreateAPIView):
+class FoodsAPIView(generics.ListCreateAPIView):             #search for food?
     queryset = Food.objects.all()
     serializer_class = Food_serializers
     permission_classes = [IsAdminUser]
@@ -206,8 +206,10 @@ class FoodsAPIView(generics.ListCreateAPIView):
 
 
 
+
+
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])             #ok
 def like(request,f_id):
     try:
 
@@ -228,8 +230,9 @@ def like(request,f_id):
     if(check.exists()):
 
         check.delete()
-        likefood.rate-=1
-        likefood.save()
+        if likefood.rate >= 1:
+            likefood.rate-=1
+            likefood.save()
         return Response({
             "message":"Unliked!!"
             })
@@ -246,7 +249,7 @@ def like(request,f_id):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])                 #ok
 def dislike(request,f_id):
     try:
 
@@ -265,8 +268,9 @@ def dislike(request,f_id):
 
     check = FoodDislike.objects.filter(dislikeuser=dislikeuser).filter(dislikefood=dislikefood)
     if(check.exists()):
-        dislikefood.rate+=1
-        dislikefood.save()
+        if dislikefood.negative_rate >= 1:
+            dislikefood.negative_rate-=1
+            dislikefood.save()
         check.delete()
         return Response({
             "message":"Undisliked!!"
@@ -274,7 +278,8 @@ def dislike(request,f_id):
     
     new_dislike = FoodDislike.objects.create(dislikeuser=dislikeuser, dislikefood=dislikefood)
     new_dislike.save()
-    dislikefood.rate-=1
+    
+    dislikefood.negative_rate+=1
     dislikefood.save()
     serializer = dislikeSerializer(new_dislike)
 

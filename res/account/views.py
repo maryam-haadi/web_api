@@ -129,7 +129,7 @@ def user_profile(request):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])      #*****************************
+@permission_classes([IsAuthenticated])      #*****************
 def update_username(request):
 
     logined_user=request.user
