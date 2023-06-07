@@ -120,7 +120,8 @@ def logout_user(request):
 
 
 
-@api_view(["GET"])                             
+@api_view(["GET"])    
+@permission_classes([IsAuthenticated])                         
 def user_profile(request):
     user=request.user
     us_ser=Register_serializers(instance=user)
@@ -129,7 +130,7 @@ def user_profile(request):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])      #*****************
+@permission_classes([IsAuthenticated])      
 def update_username(request):
 
     logined_user=request.user

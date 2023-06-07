@@ -13,19 +13,19 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])          #tanzim konam
+@permission_classes([IsAuthenticated])          #ok
 def food_list(request):
-    food_list1=Food.objects.all().order_by('rate')[2:4]
+    food_list1=Food.objects.all().order_by('-rate')[0:9]
     food_list2=Food_serializers(food_list1,many=True)
     
     return Response({'food_list':food_list2.data})
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])            #tanzim konam
+@permission_classes([IsAuthenticated])            #ok
 def food_slider(request):
 
-    food_slider1=Food.objects.all().order_by('id')[:3]
+    food_slider1=Food.objects.all().order_by('-id')[:3]
     food_slider2=Food_serializers(food_slider1,many=True)
     
     return Response({'food_slider':food_slider2.data})
@@ -175,8 +175,10 @@ def delete_comment(request,c_id):            #vorood check shavad ?
         else:
             return Response({"message":"you dont delete this comment!!"},status=status.HTTP_400_BAD_REQUEST)
 
+
     except comment.DoesNotExist:
-        return Response({"message":"this comment not exist!!"},status=status.HTTP_404_NOT_FOUND) 
+        if comment is None:
+            return Response({"message":"this comment not exist!!"},status=status.HTTP_404_NOT_FOUND) 
 
 
 

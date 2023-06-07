@@ -19,7 +19,7 @@ class Show_Comment_serializers(serializers.ModelSerializer):
         
     class Meta:
         model=Comment
-        fields=["user","message","date"]  
+        fields=["id","user","message","date"]  
 
 
 class likeSerializer(serializers.ModelSerializer):
