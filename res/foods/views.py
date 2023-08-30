@@ -12,13 +12,19 @@ import datetime
 from django.contrib.auth.models import User
 from django.db.models import Q
 
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])          #ok
 def food_list(request):
     food_list1=Food.objects.all().order_by('-rate')[0:9]
-    food_list2=Food_serializers(food_list1,many=True)
+    food_list2=Food_serializers(food_list1,many=True,context={'request':request})
     
-    return Response({'food_list':food_list2.data})
+    data=food_list2.data
+    for f in data:
+        if f['photo'].startswith('http'):
+            f['photo']=request.build_absolute_uri(f['photo'])
+
+    return Response(data)
 
 
 @api_view(["GET"])
@@ -26,9 +32,14 @@ def food_list(request):
 def food_slider(request):
 
     food_slider1=Food.objects.all().order_by('-id')[:3]
-    food_slider2=Food_serializers(food_slider1,many=True)
+    food_slider2=Food_serializers(food_slider1,many=True,context={'request':request})
+
+    data2=food_slider2.data
+    for f1 in data2:
+        if f1['photo'].startswith('http'):
+            f1['photo']=request.build_absolute_uri(f1['photo'])
     
-    return Response({'food_slider':food_slider2.data})
+    return Response(data2)
 
 
 
@@ -41,9 +52,14 @@ def food_detail(request,f_id):
     except food.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND) 
 
-    food2=Food_serializers(instance=food,many=False)    
+    food2=Food_serializers(instance=food,many=False,context={'request':request})    
+    data3=food2.data
 
-    return Response({'detail_food':food2.data})
+    if data3['photo'].startswith('http'):
+        data3['photo']=request.build_absolute_uri(data3['photo'])
+
+
+    return Response(data3)
 
 
 
@@ -87,7 +103,7 @@ def show_comment(request,f_id):
 
     c_serialize=Show_Comment_serializers(instance=comment,many=True)
 
-    return Response({"comments":c_serialize.data})
+    return Response(c_serialize.data)
 
 
   
@@ -105,9 +121,14 @@ def breakfast(request):
 
         return Response(status=status.HTTP_404_NOT_FOUND) 
 
-    breakfast_serialize=Food_serializers(instance=breakfasts,many=True)
+    breakfast_serialize=Food_serializers(instance=breakfasts,many=True,context={'request':request})
+    data4=breakfast_serialize.data
 
-    return Response(breakfast_serialize.data)
+    for f4 in data4:
+        if f4['photo'].startswith('http'):
+            f4['photo']=request.build_absolute_uri(f4['photo'])
+
+    return Response(data4)
 
 
 
@@ -121,9 +142,15 @@ def dinner(request):
 
         return Response(status=status.HTTP_404_NOT_FOUND) 
 
-    dinner_serialize=Food_serializers(instance=dinner,many=True)
+    dinner_serialize=Food_serializers(instance=dinner,many=True,context={'request':request})
+    data5= dinner_serialize.data
 
-    return Response(dinner_serialize.data)
+    for f5 in data5:
+        if f5['photo'].startswith('http'):
+            f5['photo']=request.build_absolute_uri(f5['photo'])
+
+
+    return Response(data5)
 
 
 
@@ -138,9 +165,14 @@ def lunch(request):
 
         return Response(status=status.HTTP_404_NOT_FOUND) 
 
-    lunch_serialize=Food_serializers(instance=lunch,many=True)
+    lunch_serialize=Food_serializers(instance=lunch,many=True,context={'request':request})
+    data6= lunch_serialize.data
 
-    return Response(lunch_serialize.data)
+    for f6 in data6:
+        if f6['photo'].startswith('http'):
+            f6['photo']=request.build_absolute_uri(f6['photo'])
+
+    return Response(data6)
 
 
 
@@ -154,9 +186,14 @@ def drink(request):
 
         return Response(status=status.HTTP_404_NOT_FOUND) 
 
-    drink_serialize=Food_serializers(instance=drink,many=True)
+    drink_serialize=Food_serializers(instance=drink,many=True,context={'request':request})
+    data7= drink_serialize.data
 
-    return Response(drink_serialize.data)
+    for f7 in data7:
+        if f7['photo'].startswith('http'):
+            f7['photo']=request.build_absolute_uri(f7['photo'])
+
+    return Response(data7)
 
 
 
