@@ -14,7 +14,7 @@ from django.db.models import Q
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])          #ok
+@permission_classes([IsAuthenticated])          
 def food_list(request):
     food_list1=Food.objects.all().order_by('-rate')[0:9]
     food_list2=Food_serializers(food_list1,many=True,context={'request':request})
